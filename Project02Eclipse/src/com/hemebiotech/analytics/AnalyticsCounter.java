@@ -1,7 +1,11 @@
 package com.hemebiotech.analytics;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class AnalyticsCounter {
@@ -24,13 +28,21 @@ public class AnalyticsCounter {
       line = reader.readLine(); // get another symptom
     }
     reader.close();
-    counter.forEach((key, value) -> System.out.println(key + ":" + value));
+    
+    
+    File file = new File("result.out");
+    FileOutputStream fileOutputStream = new FileOutputStream(file);
+    PrintWriter printWriter = new PrintWriter(fileOutputStream);
+    printWriter.println("############################################################################### ");
+    printWriter.println("Result after sorting by keys in ascending order ");
+    printWriter.println("############################################################################### ");
+    for (Map.Entry<String, Integer> map : counter.entrySet()) {
+      printWriter.println(map.getKey() + "=" + map.getValue());
+    }
+    // close resources
+    printWriter.close();
+    fileOutputStream.close();
 
-//		// next generate output
-//		FileWriter writer = new FileWriter ("result.out");
-//		writer.write("headache: " + headacheCount + "\n");
-//		writer.write("rash: " + rashCount + "\n");
-//		writer.write("dialated pupils: " + pupilCount + "\n");
-//		writer.close();
+
   }
 }
