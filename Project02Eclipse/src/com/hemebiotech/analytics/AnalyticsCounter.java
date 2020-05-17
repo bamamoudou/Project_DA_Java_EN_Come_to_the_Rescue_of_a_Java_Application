@@ -2,6 +2,7 @@ package com.hemebiotech.analytics;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,27 +12,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class AnalyticsCounter {
+public class AnalyticsCounter implements ISymptomReader {
   public AnalyticsCounter() {
 
   }
 
-  public List<String> readSymptomDataFromFile() throws IOException {
+  @Override
+  public List<String> readSymptomDataFromFile() {
     // first get input
-    BufferedReader reader = new BufferedReader(new FileReader("symptoms.txt"));
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new FileReader("symptoms.txt"));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
     List<String> symptomsList = new ArrayList<>();
-    String line = reader.readLine();
+    String line = null;
+    try {
+      line = reader.readLine();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     while (line != null) {
       symptomsList.add(line);
       System.out.println("symptom from file: " + line);
-      line = reader.readLine(); // get another symptom
+      try {
+        line = reader.readLine(); // get another symptom
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     // close resources
-    reader.close();
+    try {
+      reader.close();
+    } catch (IOException e) {
+
+      e.printStackTrace();
+    }
     return symptomsList;
+
   }
 
-  public Map<String, Integer> symptomsCounter(List<String> symptomsList) throws Exception {
+  @Override
+  public Map<String, Integer> symptomsCounter(List<String> symptomsList) {
     // I use TreeMap to order the symptom list by Keys in ascending Order
     TreeMap<String, Integer> counter = new TreeMap<>();
     // I check if the symptom exists in the file and we count its number of
@@ -42,14 +65,20 @@ public class AnalyticsCounter {
     }
 
     return counter;
+
   }
 
-  public void writeResultToFile(Map<String, Integer> counter) throws IOException {
-
+  @Override
+  public void writeResultToFile(Map<String, Integer> counter) {
     // TreeMap<String, Integer> counter = readSymptomDataFromFile();
     // Write the symptom list to file "result.out"
     File file = new File("result.out");
-    FileOutputStream fileOutputStream = new FileOutputStream(file);
+    FileOutputStream fileOutputStream = null;
+    try {
+      fileOutputStream = new FileOutputStream(file);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
     PrintWriter printWriter = new PrintWriter(fileOutputStream);
     printWriter.println("Result after sorting by keys in ascending order ");
     printWriter.println("###################################################################### ");
@@ -58,7 +87,12 @@ public class AnalyticsCounter {
     }
     // close resources
     printWriter.close();
-    fileOutputStream.close();
+    try {
+      fileOutputStream.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 
 }
