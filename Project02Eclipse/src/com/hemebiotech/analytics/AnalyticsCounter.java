@@ -1,9 +1,7 @@
 package com.hemebiotech.analytics;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,43 +10,59 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * This implementation makes it possible to read a list of data from a file.
+ * Then do the count and write the result in a file.
+ * 
+ * @author Mamoudou BA
+ *
+ */
 public class AnalyticsCounter implements ISymptomReader {
-  public AnalyticsCounter() {
+  private String filePath;
+  private String outFile;
+
+  /**
+   * The constructor.
+   * @param filePath a full or partial path to file with symptom strings in it, one per line
+   * @param outFile a full or partial path to a file containing the symptoms count
+   */
+  public AnalyticsCounter(String filePath, String outFile) {
+    this.filePath = filePath;
+    this.outFile = outFile;
 
   }
 
   @Override
   public List<String> readSymptomDataFromFile() {
-    // first get input
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new FileReader("symptoms.txt"));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
     List<String> symptomsList = new ArrayList<>();
-    String line = null;
-    try {
-      line = reader.readLine();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    while (line != null) {
-      symptomsList.add(line);
-      System.out.println("symptom from file: " + line);
+    if (filePath != null) {
       try {
-        line = reader.readLine(); // get another symptom
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    // close resources
-    try {
-      reader.close();
-    } catch (IOException e) {
+        // first get input
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line = reader.readLine();
 
-      e.printStackTrace();
+        while (line != null) {
+          symptomsList.add(line);
+          System.out.println("symptom from file: " + line);
+
+          line = reader.readLine(); // get another symptom
+
+        }
+        // close resources
+        reader.close();
+
+      } catch (FileNotFoundException e) {
+        System.out.printf("The file %s does not exist: ", filePath.toString());
+        // System.exit(1);
+        return null;
+      } catch (IOException e) {
+        System.out.println("File reading problem: " + e.getMessage());
+        // System.exit(1);
+        return null;
+      }
+
     }
+
     return symptomsList;
 
   }
@@ -69,28 +83,21 @@ public class AnalyticsCounter implements ISymptomReader {
   }
 
   @Override
-  public void writeResultToFile(Map<String, Integer> counter) {
-    // TreeMap<String, Integer> counter = readSymptomDataFromFile();
-    // Write the symptom list to file "result.out"
-    File file = new File("result.out");
-    FileOutputStream fileOutputStream = null;
+  public boolean writeResultToFile(Map<String, Integer> counter) {
     try {
-      fileOutputStream = new FileOutputStream(file);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-    PrintWriter printWriter = new PrintWriter(fileOutputStream);
-    printWriter.println("Result after sorting by keys in ascending order ");
-    printWriter.println("###################################################################### ");
-    for (Map.Entry<String, Integer> map : counter.entrySet()) {
-      printWriter.println(map.getKey() + "=" + map.getValue());
-    }
-    // close resources
-    printWriter.close();
-    try {
-      fileOutputStream.close();
+      // Write the symptom list to file "result.out"
+      PrintWriter printWriter = new PrintWriter(outFile);
+      printWriter.println("Result after sorting by keys in ascending order ");
+      printWriter.println("######################################################################");
+      for (Map.Entry<String, Integer> map : counter.entrySet()) {
+        printWriter.println(map.getKey() + "=" + map.getValue());
+      }
+      // close resources
+      printWriter.close();
+      return true;
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("File writing problem: " + e.getMessage());
+      return false;
     }
 
   }
