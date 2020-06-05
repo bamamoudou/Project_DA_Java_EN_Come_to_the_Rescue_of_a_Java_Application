@@ -2,4 +2,4 @@
 #A trend analysis program.
 The program will read a list of symptoms from a file and count these symptoms, then print the result of the count by sorting it into another file.
 
-#Version 0.0.3
+#Version 0.0.4

@@ -15,6 +15,7 @@ import java.util.TreeMap;
  * Then do the count and write the result in a file.
  * 
  * @author Mamoudou BA
+ * @version 0.0.4
  *
  */
 public class AnalyticsCounter implements ISymptomReader {
