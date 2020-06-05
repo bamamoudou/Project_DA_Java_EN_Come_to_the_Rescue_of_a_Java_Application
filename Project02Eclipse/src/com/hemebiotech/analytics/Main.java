@@ -8,7 +8,7 @@ import java.util.Map;
  * symptoms, then print the result of the count by sorting it into another file.
  * 
  * @author Mamoudou BA
- * @version 0.0.3
+ * @version 0.0.4
  *
  */
 public class Main {
